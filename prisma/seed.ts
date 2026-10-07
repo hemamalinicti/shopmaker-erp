@@ -10,6 +10,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting ShopMaster database seeding...');
 
+  const userCount = await prisma.user.count();
+  if (userCount > 0) {
+    console.log('✅ Database already initialized with users. Skipping seed.');
+    return;
+  }
+
   // 1. Clean existing records (optional for fresh seed)
   await prisma.billItem.deleteMany({});
   await prisma.bill.deleteMany({});

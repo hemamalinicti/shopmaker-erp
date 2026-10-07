@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -28,7 +28,7 @@ model ShopSettings {
   ownerWhatsAppNumber String?
   dailyReportEnabled  Boolean  @default(true)
   dailyReportTime     String   @default("21:00")
-  address             String
+  address             String   @db.Text
   gstNumber           String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -40,7 +40,7 @@ model DailyReportLog {
   status     String   @default("PENDING")
   sentAt     DateTime @default(now())
   messageId  String?
-  details    String?
+  details    String?  @db.Text
 
   @@index([reportDate])
 }
