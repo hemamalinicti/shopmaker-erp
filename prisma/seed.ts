@@ -1,5 +1,9 @@
-import { PrismaClient, Role, BillType, ExpenseCategory } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+
+const Role = { OWNER: 'OWNER', CASHIER: 'CASHIER' };
+const BillType = { GST: 'GST', NON_GST: 'NON_GST' };
+const ExpenseCategory = { CURRENT: 'CURRENT', EB: 'EB', SALARY: 'SALARY', OTHER: 'OTHER' };
 
 const prisma = new PrismaClient();
 

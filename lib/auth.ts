@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { Role } from '@prisma/client';
+import { Role } from '@/types';
 import { cookies } from 'next/headers';
 import crypto from 'crypto';
 
@@ -90,7 +90,7 @@ export async function loginUser(email: string, password: string) {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role,
+      role: user.role as Role,
     };
 
     const token = createSessionToken(sessionPayload);

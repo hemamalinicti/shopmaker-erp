@@ -135,7 +135,7 @@ export async function getDailyProfitLossReport(
     const grossProfit = calculateGrossProfit(totalSales, cogs);
 
     // 6. Compute Total Operating Expenses & Category Breakdown
-    const expenseBreakdown = {
+    const expenseBreakdown: Record<string, number> = {
       CURRENT: 0,
       EB: 0,
       SALARY: 0,

@@ -3,32 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-}
-
-enum Role {
-  OWNER
-  CASHIER
-}
-
-enum BillType {
-  GST
-  NON_GST
-}
-
-enum ExpenseCategory {
-  CURRENT
-  EB
-  SALARY
-  OTHER
-}
-
-enum DailyReportStatus {
-  PENDING
-  SENT
-  FAILED
-  SIMULATED
 }
 
 model User {
@@ -37,7 +13,7 @@ model User {
   email        String   @unique
   phone        String?
   passwordHash String
-  role         Role     @default(CASHIER)
+  role         String   @default("CASHIER")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -52,19 +28,19 @@ model ShopSettings {
   ownerWhatsAppNumber String?
   dailyReportEnabled  Boolean  @default(true)
   dailyReportTime     String   @default("21:00")
-  address             String   @db.Text
+  address             String
   gstNumber           String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
 
 model DailyReportLog {
-  id         String            @id @default(cuid())
-  reportDate String            @unique
-  status     DailyReportStatus @default(PENDING)
-  sentAt     DateTime          @default(now())
+  id         String   @id @default(cuid())
+  reportDate String   @unique
+  status     String   @default("PENDING")
+  sentAt     DateTime @default(now())
   messageId  String?
-  details    String?           @db.Text
+  details    String?
 
   @@index([reportDate])
 }
@@ -73,9 +49,9 @@ model Product {
   id            String     @id @default(cuid())
   name          String
   category      String
-  purchasePrice Decimal    @db.Decimal(12, 2)
-  sellingPrice  Decimal    @db.Decimal(12, 2)
-  gstRate       Decimal    @default(0.00) @db.Decimal(5, 2)
+  purchasePrice Float
+  sellingPrice  Float
+  gstRate       Float      @default(0.00)
   stockQuantity Int        @default(0)
   lowStockLimit Int        @default(5)
   isActive      Boolean    @default(true)
@@ -105,11 +81,11 @@ model Bill {
   invoiceNumber String     @unique
   customerId    String?
   customer      Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  billType      BillType   @default(GST)
-  subtotal      Decimal    @db.Decimal(12, 2)
-  gstAmount     Decimal    @db.Decimal(12, 2)
-  totalAmount   Decimal    @db.Decimal(12, 2)
-  profitAmount  Decimal    @db.Decimal(12, 2)
+  billType      String     @default("GST")
+  subtotal      Float
+  gstAmount     Float
+  totalAmount   Float
+  profitAmount  Float
   createdAt     DateTime   @default(now())
   billItems     BillItem[]
 
@@ -124,23 +100,23 @@ model BillItem {
   productId     String
   product       Product  @relation(fields: [productId], references: [id])
   quantity      Int
-  purchasePrice Decimal  @db.Decimal(12, 2)
-  sellingPrice  Decimal  @db.Decimal(12, 2)
-  gstRate       Decimal  @db.Decimal(5, 2)
-  total         Decimal  @db.Decimal(12, 2)
-  profit        Decimal  @db.Decimal(12, 2)
+  purchasePrice Float
+  sellingPrice  Float
+  gstRate       Float
+  total         Float
+  profit        Float
 
   @@index([billId])
   @@index([productId])
 }
 
 model Expense {
-  id          String          @id @default(cuid())
-  category    ExpenseCategory
+  id          String   @id @default(cuid())
+  category    String
   description String
-  amount      Decimal         @db.Decimal(12, 2)
-  expenseDate DateTime        @default(now())
-  createdAt   DateTime        @default(now())
+  amount      Float
+  expenseDate DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   @@index([expenseDate])
   @@index([category])

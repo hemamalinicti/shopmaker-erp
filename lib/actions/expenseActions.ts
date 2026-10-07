@@ -163,7 +163,7 @@ export async function getExpenses(params: ExpenseFilterParams = {}) {
 
     return expenses.map((e) => ({
       id: e.id,
-      category: e.category,
+      category: e.category as 'CURRENT' | 'EB' | 'SALARY' | 'OTHER',
       description: e.description,
       amount: Number(e.amount),
       expenseDate: e.expenseDate.toISOString(),
@@ -203,7 +203,7 @@ export async function getExpenseSummary() {
     const todayTotal = todayExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
     const monthTotal = monthExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
 
-    const categoryBreakdown = {
+    const categoryBreakdown: Record<string, number> = {
       CURRENT: 0,
       EB: 0,
       SALARY: 0,
